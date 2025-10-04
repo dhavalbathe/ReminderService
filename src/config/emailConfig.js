@@ -7,6 +7,9 @@ const sender = nodemailer.createTransport({
     auth: {
         user: EMAIL_ID,
         pass: EMAIL_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false // <--- ignore self-signed certificate
     }
 });
 

@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      subjet: {
+      subject: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -25,6 +25,7 @@ module.exports = {
         type: Sequelize.ENUM,
         allowNull: false,
         values: ['PENDING', 'SUCCESS', "FAILED"],
+        defaultValue: "PENDING",
       },
       notificationTime: {
         type: Sequelize.DATE,

@@ -1,23 +1,27 @@
 const express = require('express');
 
-const {PORT} = require('./config/serverConfig');
-const {sendBasicEmail} = require('./services/email-service');
+const {PORT, REMINDER_BINDING_KEY} = require('./config/serverConfig');
+const EmailService = require('./services/email-service');
+const setUpJob = require('./utils/job');
 
-const setUpAndStartServer = () => {
+const {createChannel, subscribeMessage} = require('./utils/messageQueue');
+
+const ticketController = require('./controllers/email-controller');
+
+const setUpAndStartServer = async () => {
     const app = express();
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
+    app.post('/api/v1/ticket', ticketController.create);
+
+    const channel = await createChannel();
+    subscribeMessage(channel, EmailService.subscribeEvent, REMINDER_BINDING_KEY);
+
     app.listen(PORT, () => {
         console.log(`Server is running on PORT: ${PORT}`);
-
-        sendBasicEmail(
-            'tpassdhaval@gmail.com',
-            'dhavalbathe01@gmail.com',
-            'This is a test mail',
-            'This is the mail body, for testing purpose. Thank You !'
-        );
+        setUpJob();
     });
 }
 
